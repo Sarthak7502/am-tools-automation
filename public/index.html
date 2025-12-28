@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AM Tools - Document Generator</title>
+    <style>
+        :root {
+            /* GoSharpener Themed Colors */
+            --primary: #0056b3;      /* Deep Blue */
+            --secondary: #ff9800;    /* Vibrant Orange */
+            --success: #28a745;      /* Green */
+            --danger: #dc3545;       /* Red */
+            --gray: #6c757d;         /* Gray for Reset */
+            --bg: #eef2f5;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --border: #ced4da;
+            --light-blue: #e3f2fd;
+            --light-orange: #fff3e0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif; 
+            background: var(--bg); 
+            padding: 30px 20px; 
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            max-width: 850px; 
+            margin: 0 auto; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            border-top: 5px solid var(--primary);
+        }
+
+        /* Branding */
+        .brand-title {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        
+        .sub-title {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        h3 { 
+            font-size: 1.2rem; 
+            margin-bottom: 15px; 
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Banners & Alerts */
+        .info-banner, .warning-banner {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            border-left: 5px solid;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-banner {
+            background-color: var(--light-blue);
+            color: #0c5460;
+            border-color: var(--primary);
+        }
+
+        .warning-banner {
+            background-color: var(--light-orange);
+            color: #856404;
+            border-color: var(--secondary);
+        }
+
+        /* Form Elements */
+        label { 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            color: #555; 
+            display: block; 
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        input, textarea, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0; 
+            border: 1px solid var(--border); 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        /* Sections */
+        .section { 
+            background: #fafafa; 
+            border: 1px solid #eee;
+            padding: 25px; 
+            margin-bottom: 20px; 
+            border-radius: 10px; 
+            position: relative; 
+        }
+
+        .session-block { border-left: 4px solid var(--secondary); }
+        .mou-section { border-left: 4px solid var(--primary); }
+
+        /* Buttons */
+        button { 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 6px; 
+            padding: 10px 20px; 
+            font-weight: 600; 
+            transition: all 0.2s ease;
+        }
+
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .add-session { 
+            background: var(--primary); 
+            color: white; 
+            width: 100%; 
+            margin-top: 10px; 
+            padding: 12px;
+        }
+
+        .add-sdg { 
+            background: #fff; 
+            color: var(--primary); 
+            border: 1px dashed var(--primary); 
+            font-size: 0.85rem; 
+            margin-top: 5px;
+        }
+        .add-sdg:hover { background: var(--light-blue); }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .gen-btn { 
+            background: linear-gradient(135deg, var(--secondary), #e68a00); 
+            color: white; 
+            flex: 2; /* Takes up more space */
+            font-size: 1.2rem; 
+            padding: 18px; 
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .clear-btn {
+            background: var(--gray);
+            color: white;
+            flex: 1; /* Smaller button */
+            font-size: 1.1rem;
+            padding: 18px;
+        }
+        .clear-btn:hover { background: #5a6268; }
+
+        .remove-btn { 
+            background: var(--danger); 
+            color: white; 
+            position: absolute; 
+            right: 15px; 
+            top: 15px; 
+            padding: 5px 10px; 
+            font-size: 0.75rem; 
+        }
+
+        .hidden { display: none; }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .checkbox-container input { width: auto; margin-right: 12px; transform: scale(1.2); }
+        
+        .note-text {
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 class="brand-title">AM Tools</h1>
+        <div class="sub-title">Document Automation System</div>
+
+        <div class="info-banner">
+            <strong>Note:</strong>&nbsp;File is pre-downloaded in open word file for ease of editing.
+        </div>
+        
+        <label>Select Document Type</label>
+        <select id="docType" onchange="toggleView()">
+            <option value="REPORT">Progress Report</option>
+            <option value="MOU">MoU (Proposal)</option>
+        </select>
+
+        <label>School Name</label>
+        <input type="text" id="school_name" placeholder="Full School Name">
+
+        <div id="report-view">
+            <div class="warning-banner">
+                <strong>Action Required:</strong>&nbsp;Please enter images manually in the generated file after opening it.
+            </div>
+
+            <label>Report Period</label>
+            <input type="text" id="report_period" placeholder="e.g., July to Nov 2025">
+            
+            <div id="sessions-container">
+                <div class="section session-block">
+                    <h3>Session 1</h3>
+                    <input type="text" class="s_title" placeholder="Session Title">
+                    <input type="text" class="s_grades" placeholder="Grades (e.g., 6th - 8th)">
+                    <textarea class="s_summary" rows="3" placeholder="Session Summary"></textarea>
+                    
+                    <label>SDGs</label>
+                    <div class="sdg-list-container">
+                        <div class="sdg-list">
+                            <input type="text" class="s_sdg" placeholder="SDG No.: Name">
+                        </div>
+                    </div>
+                    <button type="button" class="add-sdg" onclick="addSdgField(this)">+ Add Another SDG</button>
+                </div>
+            </div>
+            
+            <button class="add-session" onclick="addNewSession()">+ Add Another Session</button>
+            
+            <label>Activation Percentage</label>
+            <input type="text" id="activation" placeholder="e.g. 85">
+            
+            <div class="section" style="background: var(--light-blue); border: 1px solid var(--primary);">
+                <div class="checkbox-container" style="background: transparent; border: none; padding: 0;">
+                    <input type="checkbox" id="show_dates" onchange="toggleDates()">
+                    <span style="font-weight: 600; font-size: 15px; color: var(--primary);">Include Future Dates Requirement?</span>
+                </div>
+                <div id="dates-opt" class="hidden" style="margin-top: 15px;">
+                    <div class="note-text">Note: You can enter many session names and month names (if required) separated by comma.</div>
+                    
+                    <label>Next Session Topics</label>
+                    <input type="text" id="req_sessions" placeholder="Topics (separated by comma)">
+                    <label>Proposed Month</label>
+                    <input type="text" id="req_month" placeholder="Months (separated by comma)">
+                </div>
+            </div>
+        </div>
+
+        <div id="mou-view" class="hidden">
+            <div class="section mou-section">
+                <h3>MoU Details</h3>
+                <label>Contact Person</label>
+                <input type="text" id="contact_name" placeholder="Contact Person Name">
+                <input type="text" id="position" placeholder="Designation">
+                <label>Online Presence</label>
+                <input type="text" id="website" placeholder="School Website">
+                <label>Location</label>
+                <input type="text" id="address" placeholder="School Address">
+                
+                <div class="grid-2">
+                    <div>
+                        <label>No. of Sessions</label>
+                        <input type="text" id="session_no" placeholder="e.g. 10">
+                    </div>
+                    <div>
+                        <label>Classes (Roman)</label>
+                        <input type="text" id="classes_roman" placeholder="e.g. VI - XII">
+                    </div>
+                </div>
+                
+                <label>Project Cost (INR)</label>
+                <input type="text" id="amount_inr" placeholder="Amount">
+                
+                <div class="grid-2">
+                    <div>
+                        <label>Start Date</label>
+                        <input type="text" id="tenure_start" placeholder="Date">
+                    </div>
+                    <div>
+                        <label>End Date</label>
+                        <input type="text" id="tenure_end" placeholder="Date">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section mou-section">
+                <h3>Execution Date</h3>
+                <div class="grid-3">
+                    <input type="text" id="exec_day" placeholder="Day (27th)">
+                    <input type="text" id="exec_month" placeholder="Month (Dec)">
+                    <input type="text" id="exec_year" placeholder="Year (2025)">
+                </div>
+                <label>Short Format Date</label>
+                <input type="text" id="exec_date_short" placeholder="e.g. 27 Dec 2025">
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="clear-btn" onclick="clearForm()">Clear Fields</button>
+            <button class="gen-btn" onclick="generate()">Generate Document</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleView() {
+            const type = document.getElementById('docType').value;
+            document.getElementById('report-view').classList.toggle('hidden', type !== 'REPORT');
+            document.getElementById('mou-view').classList.toggle('hidden', type !== 'MOU');
+        }
+
+        function toggleDates() {
+            const isChecked = document.getElementById('show_dates').checked;
+            document.getElementById('dates-opt').classList.toggle('hidden', !isChecked);
+        }
+
+        function clearForm() {
+            if(!confirm("Are you sure you want to clear all data? This cannot be undone.")) return;
+
+            // 1. Reset Text Inputs
+            document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+            
+            // 2. Reset Checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                el.checked = false;
+                // Trigger change event to hide sections like Dates
+                if(el.onchange) el.onchange(); 
+            });
+
+            // 3. Reset Sessions
+            const container = document.getElementById('sessions-container');
+            container.innerHTML = ''; 
+            addNewSession(); // Add one clean session back
+
+            // 4. Reset Select (Optional, or keep current selection)
+            // document.getElementById('docType').selectedIndex = 0;
+            // toggleView();
+        }
+
+        function addSdgField(btn) {
+            const container = btn.previousElementSibling;
+            const input = document.createElement('input');
+            input.className = 's_sdg';
+            input.style.marginTop = "8px";
+            input.placeholder = 'SDG No.: Name';
+            container.appendChild(input);
+        }
+
+        function addNewSession() {
+            const container = document.getElementById('sessions-container');
+            const index = container.querySelectorAll('.session-block').length + 1;
+            const div = document.createElement('div');
+            div.className = 'section session-block';
+            div.innerHTML = `
+                <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+                <h3>Session ${index}</h3>
+                <input type="text" class="s_title" placeholder="Session Title">
+                <input type="text" class="s_grades" placeholder="Grades">
+                <textarea class="s_summary" rows="3" placeholder="Summary"></textarea>
+                <label>SDGs</label>
+                <div class="sdg-list-container">
+                    <div class="sdg-list">
+                        <input type="text" class="s_sdg" placeholder="SDG No.: Name">
+                    </div>
+                </div>
+                <button type="button" class="add-sdg" onclick="addSdgField(this)">+ Add Another SDG</button>
+            `;
+            container.appendChild(div);
+        }
+
+        async function generate() {
+            const type = document.getElementById('docType').value;
+            const sessions = [];
+
+            if (type === 'REPORT') {
+                document.querySelectorAll('.session-block').forEach((block) => {
+                    const sdgs = Array.from(block.querySelectorAll('.s_sdg'))
+                        .filter(i => i.value.includes(':'))
+                        .map(i => ({
+                            number: i.value.split(':')[0].trim(),
+                            name: i.value.split(':')[1].trim()
+                        }));
+
+                    sessions.push({
+                        session_title: block.querySelector('.s_title').value,
+                        grades: block.querySelector('.s_grades').value,
+                        summary: block.querySelector('.s_summary').value,
+                        sdgs: sdgs
+                    });
+                });
+            }
+
+            const data = {
+                docType: type, // Important for JSON mode
+                school_name: document.getElementById('school_name').value,
+                report_period: document.getElementById('report_period').value,
+                activation_pct: document.getElementById('activation').value,
+                req_sessions: document.getElementById('req_sessions').value,
+                req_month: document.getElementById('req_month').value,
+                show_dates_req: document.getElementById('show_dates').checked,
+                contact_name: document.getElementById('contact_name').value,
+                position: document.getElementById('position').value,
+                website: document.getElementById('website').value,
+                address: document.getElementById('address').value,
+                session_no: document.getElementById('session_no').value,
+                classes_roman: document.getElementById('classes_roman').value,
+                amount_inr: document.getElementById('amount_inr').value,
+                tenure_start: document.getElementById('tenure_start').value,
+                tenure_end: document.getElementById('tenure_end').value,
+                exec_day: document.getElementById('exec_day').value,
+                exec_month: document.getElementById('exec_month').value,
+                exec_year: document.getElementById('exec_year').value,
+                exec_date_short: document.getElementById('exec_date_short').value,
+                sessions: sessions
+            };
+            
+            try {
+                const response = await fetch('/generate', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    alert("Error: " + errText);
+                    return;
+                }
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const safeName = (data.school_name || "File").replace(/[^a-z0-9]/gi, '_');
+                a.download = type === 'REPORT' ? `Progress_Report_${safeName}.docx` : `MOU_${safeName}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } catch (err) {
+                console.error(err);
+                alert("Request failed. Check console.");
+            }
+        }
+    </script>
+</body>
+</html>
